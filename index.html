@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 const TEST_INFO = {
   testDate: "08-Mar-25",
   testLocation: "Center for Women and Development",
-  mapLink: "https://www.google.com/maps/embed/v1/place?q=Trung+tâm+Phụ+nữ+và+Phát+triển&key=AIzaSyD-0_tKi2v0RkJarJ3oAn_hlzh6eBAyC0E"
+  mapLink: "https://www.google.com/maps/embed/v1/place?q=Trung+tâm+Phụ+nữ+và+Phát+triển&key=YOUR_GOOGLE_MAPS_API_KEY"
 };
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxNB51n1158ffw6XBUpUmXEgfpKdrtVcS1x8QxeNVWXR7cK8UPWNM2d772zEYHw6hvEew/exec";
+const API_URL = "https://script.google.com/macros/s/YOUR_GOOGLE_APPS_SCRIPT_ID/exec";
 
 const CandidateLookup = () => {
   const [regNumber, setRegNumber] = useState("");
@@ -17,9 +17,17 @@ const CandidateLookup = () => {
 
   useEffect(() => {
     fetch(API_URL)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => setCandidates(data))
-      .catch(error => console.error("Error fetching data:", error));
+      .catch(error => {
+        console.error("Error fetching data:", error);
+        setError("Failed to load data. Please try again later.");
+      });
   }, []);
 
   const handleSearch = () => {
